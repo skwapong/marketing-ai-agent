@@ -74,7 +74,7 @@ export default function ChatInterface({ messages, onSendMessage, isLoading, agen
   const workflows = agentData ? getWorkflowsForAgent(agentData.id) : [];
 
   return (
-    <div className="chat-container h-full flex flex-col bg-white dark:bg-td-dark">
+    <div className="chat-container h-full flex flex-col bg-gray-50 dark:bg-td-dark">
       <div className="chat-messages flex-1 overflow-y-auto p-8 space-y-6">
         {activeWorkflow ? (
           <InteractiveWorkflow
@@ -214,29 +214,39 @@ export default function ChatInterface({ messages, onSendMessage, isLoading, agen
           messages.map((message, idx) => (
             <div
               key={idx}
-              className={`flex items-start space-x-3 ${
+              className={`flex items-start gap-3 ${
                 message.role === 'user' ? 'justify-end' : ''
               } animate-fade-in`}
             >
               {message.role === 'assistant' && (
-                <div className="bg-gradient-blue rounded-full p-2.5 flex-shrink-0 shadow-glow">
-                  <Bot className="w-5 h-5 text-white" />
+                <div className="flex-shrink-0 mt-1">
+                  <div className={`bg-gradient-to-br ${agentData?.color || 'from-purple-500 to-purple-600'} rounded-xl p-2.5 shadow-md`}>
+                    {agentData?.icon ? (
+                      <agentData.icon className="w-5 h-5 text-white" />
+                    ) : (
+                      <Bot className="w-5 h-5 text-white" />
+                    )}
+                  </div>
                 </div>
               )}
 
               <div
-                className={`max-w-3xl rounded-2xl p-5 shadow-soft ${
+                className={`max-w-2xl ${
                   message.role === 'user'
-                    ? 'bg-td-blue/10 dark:bg-td-navy-light border border-td-blue/20 dark:border-td-navy-light/50 text-gray-900 dark:text-white ml-auto'
-                    : 'bg-white/95 text-gray-800 border border-gray-100'
+                    ? 'bg-gradient-to-br from-td-blue to-blue-600 text-white rounded-2xl rounded-tr-md p-4 shadow-md ml-auto'
+                    : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-2xl rounded-tl-md p-4 shadow-sm border border-gray-100 dark:border-gray-700'
                 }`}
               >
-                <p className="whitespace-pre-wrap leading-relaxed text-sm">{message.content}</p>
+                <p className="whitespace-pre-wrap leading-relaxed text-[15px]" style={{ lineHeight: '1.6' }}>
+                  {message.content}
+                </p>
               </div>
 
               {message.role === 'user' && (
-                <div className="bg-td-blue/80 rounded-full p-2.5 flex-shrink-0">
-                  <User className="w-5 h-5 text-white" />
+                <div className="flex-shrink-0 mt-1">
+                  <div className="bg-gradient-to-br from-gray-600 to-gray-700 rounded-xl p-2.5 shadow-md">
+                    <User className="w-5 h-5 text-white" />
+                  </div>
                 </div>
               )}
             </div>
@@ -244,15 +254,21 @@ export default function ChatInterface({ messages, onSendMessage, isLoading, agen
         )}
 
         {isLoading && (
-          <div className="flex items-start space-x-3 animate-fade-in">
-            <div className="bg-gradient-blue rounded-full p-2.5 shadow-glow">
-              <Bot className="w-5 h-5 text-white" />
+          <div className="flex items-start gap-3 animate-fade-in">
+            <div className="flex-shrink-0 mt-1">
+              <div className={`bg-gradient-to-br ${agentData?.color || 'from-purple-500 to-purple-600'} rounded-xl p-2.5 shadow-md`}>
+                {agentData?.icon ? (
+                  <agentData.icon className="w-5 h-5 text-white" />
+                ) : (
+                  <Bot className="w-5 h-5 text-white" />
+                )}
+              </div>
             </div>
-            <div className="bg-white/95 rounded-2xl p-5 shadow-soft">
-              <div className="flex space-x-2">
-                <div className="w-2.5 h-2.5 bg-td-blue rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                <div className="w-2.5 h-2.5 bg-td-blue rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                <div className="w-2.5 h-2.5 bg-td-blue rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+            <div className="bg-white dark:bg-gray-800 rounded-2xl rounded-tl-md p-4 shadow-sm border border-gray-100 dark:border-gray-700">
+              <div className="flex items-center gap-1.5">
+                <div className="w-2 h-2 bg-td-blue rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                <div className="w-2 h-2 bg-td-blue rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                <div className="w-2 h-2 bg-td-blue rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
               </div>
             </div>
           </div>
@@ -261,23 +277,26 @@ export default function ChatInterface({ messages, onSendMessage, isLoading, agen
         <div ref={messagesEndRef} />
       </div>
 
-      <form onSubmit={handleSubmit} className="chat-input-container border-t border-gray-200 dark:border-td-navy-light/30 bg-white dark:bg-gradient-dark p-6">
-        <div className="flex space-x-3 max-w-4xl mx-auto">
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask about customer segments, campaigns, or marketing insights..."
-            className="flex-1 px-5 py-4 bg-gray-50 dark:bg-td-navy-light/40 border border-gray-300 dark:border-td-navy-light/30 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-td-blue focus:border-td-blue transition-all"
-            disabled={isLoading}
-          />
+      <form onSubmit={handleSubmit} className="chat-input-container border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-td-navy-light/20 p-6">
+        <div className="flex gap-3 max-w-4xl mx-auto">
+          <div className="flex-1 relative">
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder={agentData ? `Ask ${agentData.name} anything...` : "Ask about customer segments, campaigns, or marketing insights..."}
+              className="w-full px-5 py-3.5 bg-white dark:bg-td-navy-light/60 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-td-blue/50 focus:border-td-blue transition-all text-[15px]"
+              disabled={isLoading}
+              style={{ lineHeight: '1.5' }}
+            />
+          </div>
           <button
             type="submit"
             disabled={isLoading || !input.trim()}
-            className="bg-gradient-blue text-white px-8 py-4 rounded-xl hover:shadow-glow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center space-x-2 font-semibold"
+            className="bg-gradient-to-r from-td-blue to-blue-600 text-white px-6 py-3.5 rounded-xl hover:shadow-lg hover:scale-[1.02] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 transition-all duration-200 flex items-center gap-2 font-semibold"
           >
-            <span>Send</span>
-            <Send className="w-5 h-5" />
+            <span className="text-[15px]">Send</span>
+            <Send className="w-4 h-4" />
           </button>
         </div>
       </form>
