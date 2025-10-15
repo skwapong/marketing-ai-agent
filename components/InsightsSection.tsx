@@ -78,6 +78,12 @@ export default function InsightsSection() {
   const [showFilters, setShowFilters] = useState(false);
   const [channelFilter, setChannelFilter] = useState<string>('all');
 
+  // Modal states
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [showSegmentModal, setShowSegmentModal] = useState(false);
+  const [showForecastModal, setShowForecastModal] = useState(false);
+  const [selectedSegment, setSelectedSegment] = useState<AudienceSegment | null>(null);
+
   // Base data that changes with time range
   const getMetricsForTimeRange = (range: '7d' | '30d' | '90d'): MetricCard[] => {
     const multiplier = range === '7d' ? 0.25 : range === '30d' ? 1 : 3;
@@ -637,24 +643,534 @@ export default function InsightsSection() {
 
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <button className="p-6 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-2 border-blue-200 dark:border-blue-800 rounded-xl hover:border-blue-500 hover:shadow-lg transition-all duration-300 text-left group">
+        <button
+          onClick={() => setShowReportModal(true)}
+          className="p-6 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-2 border-blue-200 dark:border-blue-800 rounded-xl hover:border-blue-500 hover:shadow-lg transition-all duration-300 text-left group"
+        >
           <BarChart3 className="w-8 h-8 text-blue-600 mb-3 group-hover:scale-110 transition-transform" />
           <h3 className="font-bold text-gray-900 dark:text-white mb-1">Generate Report</h3>
           <p className="text-sm text-gray-600 dark:text-gray-400">Create a custom analytics report</p>
         </button>
 
-        <button className="p-6 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border-2 border-purple-200 dark:border-purple-800 rounded-xl hover:border-purple-500 hover:shadow-lg transition-all duration-300 text-left group">
+        <button
+          onClick={() => setShowSegmentModal(true)}
+          className="p-6 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border-2 border-purple-200 dark:border-purple-800 rounded-xl hover:border-purple-500 hover:shadow-lg transition-all duration-300 text-left group"
+        >
           <PieChart className="w-8 h-8 text-purple-600 mb-3 group-hover:scale-110 transition-transform" />
           <h3 className="font-bold text-gray-900 dark:text-white mb-1">Segment Analysis</h3>
           <p className="text-sm text-gray-600 dark:text-gray-400">Deep dive into audience segments</p>
         </button>
 
-        <button className="p-6 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-2 border-green-200 dark:border-green-800 rounded-xl hover:border-green-500 hover:shadow-lg transition-all duration-300 text-left group">
+        <button
+          onClick={() => setShowForecastModal(true)}
+          className="p-6 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-2 border-green-200 dark:border-green-800 rounded-xl hover:border-green-500 hover:shadow-lg transition-all duration-300 text-left group"
+        >
           <LineChart className="w-8 h-8 text-green-600 mb-3 group-hover:scale-110 transition-transform" />
           <h3 className="font-bold text-gray-900 dark:text-white mb-1">Forecast Trends</h3>
           <p className="text-sm text-gray-600 dark:text-gray-400">AI-powered performance predictions</p>
         </button>
       </div>
+
+      {/* Generate Report Modal */}
+      {showReportModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowReportModal(false)}>
+          <div className="bg-white dark:bg-td-navy-light border border-gray-200 dark:border-td-navy-light/30 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
+                    <BarChart3 className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Generate Report</h2>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Create a custom analytics report</p>
+                  </div>
+                </div>
+                <button onClick={() => setShowReportModal(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div className="p-6 space-y-6">
+              {/* Report Type */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Report Type</label>
+                <div className="grid grid-cols-2 gap-3">
+                  {['PDF', 'Excel', 'CSV', 'JSON'].map((type) => (
+                    <button key={type} className="p-4 border-2 border-gray-200 dark:border-gray-700 rounded-xl hover:border-td-blue hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-300 text-left">
+                      <div className="flex items-center space-x-2">
+                        <Download className="w-5 h-5 text-td-blue" />
+                        <span className="font-semibold text-gray-900 dark:text-white">{type}</span>
+                      </div>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Export as {type}</p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Time Range */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Time Range</label>
+                <select className="w-full px-4 py-3 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-td-navy-light text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-td-blue">
+                  <option>Last 7 Days</option>
+                  <option>Last 30 Days</option>
+                  <option>Last 90 Days</option>
+                  <option>This Quarter</option>
+                  <option>This Year</option>
+                  <option>Custom Range</option>
+                </select>
+              </div>
+
+              {/* Metrics to Include */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Metrics to Include</label>
+                <div className="space-y-2">
+                  {['Revenue & ROAS', 'Campaign Performance', 'Channel Analytics', 'Audience Segments', 'Conversion Metrics', 'Engagement Rates'].map((metric) => (
+                    <label key={metric} className="flex items-center space-x-3 p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-td-navy-light/20 cursor-pointer">
+                      <input type="checkbox" defaultChecked className="w-4 h-4 text-td-blue rounded" />
+                      <span className="text-sm text-gray-700 dark:text-gray-300">{metric}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Channel Selection */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Channels</label>
+                <select className="w-full px-4 py-3 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-td-navy-light text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-td-blue">
+                  <option>All Channels</option>
+                  <option>TV & Video Only</option>
+                  <option>Social Media Only</option>
+                  <option>Retail Media Networks Only</option>
+                  <option>Email & CRM Only</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="p-6 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
+              <button onClick={() => setShowReportModal(false)} className="px-6 py-3 border border-gray-300 dark:border-gray-600 rounded-xl font-semibold hover:bg-gray-50 dark:hover:bg-td-navy-light/40 transition-colors">
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  handleExport('json');
+                  setShowReportModal(false);
+                }}
+                className="px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all duration-300"
+              >
+                Generate Report
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Segment Analysis Modal */}
+      {showSegmentModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowSegmentModal(false)}>
+          <div className="bg-white dark:bg-td-navy-light border border-gray-200 dark:border-td-navy-light/30 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center">
+                    <PieChart className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Segment Analysis</h2>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Deep dive into audience segments</p>
+                  </div>
+                </div>
+                <button onClick={() => setShowSegmentModal(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div className="p-6 space-y-6">
+              {/* Segment Selector */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Select Segment</label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {audienceSegments.map((segment) => (
+                    <button
+                      key={segment.name}
+                      onClick={() => setSelectedSegment(segment)}
+                      className={`p-4 border-2 rounded-xl transition-all duration-300 text-left ${
+                        selectedSegment?.name === segment.name
+                          ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20'
+                          : 'border-gray-200 dark:border-gray-700 hover:border-purple-300'
+                      }`}
+                    >
+                      <div className="flex items-center space-x-2 mb-2">
+                        <div className={`w-3 h-3 ${segment.color} rounded-full`}></div>
+                        <h3 className="font-semibold text-gray-900 dark:text-white">{segment.name}</h3>
+                      </div>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">{formatNumber(segment.size)} users</p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Segment Details */}
+              {selectedSegment && (
+                <div className="space-y-4">
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-white">Detailed Metrics</h3>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl">
+                      <Users className="w-6 h-6 text-blue-600 mb-2" />
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Total Users</p>
+                      <p className="text-2xl font-bold text-gray-900 dark:text-white">{formatNumber(selectedSegment.size)}</p>
+                    </div>
+
+                    <div className="p-4 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-xl">
+                      <DollarSign className="w-6 h-6 text-green-600 mb-2" />
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Total Revenue</p>
+                      <p className="text-2xl font-bold text-gray-900 dark:text-white">${formatNumber(selectedSegment.revenue)}</p>
+                    </div>
+
+                    <div className="p-4 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl">
+                      <Activity className="w-6 h-6 text-purple-600 mb-2" />
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Engagement Rate</p>
+                      <p className="text-2xl font-bold text-gray-900 dark:text-white">{selectedSegment.engagement}%</p>
+                    </div>
+                  </div>
+
+                  {/* Additional Metrics */}
+                  <div className="p-4 bg-gray-50 dark:bg-td-navy-light/20 rounded-xl space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600 dark:text-gray-400">Avg Order Value</span>
+                      <span className="font-bold text-gray-900 dark:text-white">${selectedSegment.avgOrderValue}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600 dark:text-gray-400">Revenue per User</span>
+                      <span className="font-bold text-gray-900 dark:text-white">${(selectedSegment.revenue / selectedSegment.size).toFixed(2)}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600 dark:text-gray-400">Churn Risk</span>
+                      <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                        selectedSegment.churnRisk === 'low' ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' :
+                        selectedSegment.churnRisk === 'medium' ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400' :
+                        'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
+                      }`}>
+                        {selectedSegment.churnRisk?.toUpperCase()}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* AI Recommendations */}
+                  <div className="p-4 bg-gradient-to-br from-cyan-50 to-blue-50 dark:from-cyan-900/20 dark:to-blue-900/20 border border-cyan-200 dark:border-cyan-800 rounded-xl">
+                    <h4 className="font-semibold text-gray-900 dark:text-white mb-3 flex items-center space-x-2">
+                      <TrendingUp className="w-5 h-5 text-cyan-600" />
+                      <span>AI Recommendations</span>
+                    </h4>
+                    <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
+                      {selectedSegment.churnRisk === 'high' ? (
+                        <>
+                          <li className="flex items-start space-x-2">
+                            <span className="text-cyan-600 mt-0.5">•</span>
+                            <span>Deploy win-back campaign with 20% discount offer within 7 days</span>
+                          </li>
+                          <li className="flex items-start space-x-2">
+                            <span className="text-cyan-600 mt-0.5">•</span>
+                            <span>Send personalized email with product recommendations</span>
+                          </li>
+                          <li className="flex items-start space-x-2">
+                            <span className="text-cyan-600 mt-0.5">•</span>
+                            <span>Consider SMS outreach for high-value customers in this segment</span>
+                          </li>
+                        </>
+                      ) : selectedSegment.engagement > 70 ? (
+                        <>
+                          <li className="flex items-start space-x-2">
+                            <span className="text-cyan-600 mt-0.5">•</span>
+                            <span>Excellent engagement - consider upsell and premium product offers</span>
+                          </li>
+                          <li className="flex items-start space-x-2">
+                            <span className="text-cyan-600 mt-0.5">•</span>
+                            <span>Launch referral program to leverage brand advocacy</span>
+                          </li>
+                          <li className="flex items-start space-x-2">
+                            <span className="text-cyan-600 mt-0.5">•</span>
+                            <span>Test new product launches with this highly engaged segment</span>
+                          </li>
+                        </>
+                      ) : (
+                        <>
+                          <li className="flex items-start space-x-2">
+                            <span className="text-cyan-600 mt-0.5">•</span>
+                            <span>Increase engagement with personalized content and offers</span>
+                          </li>
+                          <li className="flex items-start space-x-2">
+                            <span className="text-cyan-600 mt-0.5">•</span>
+                            <span>A/B test messaging to find optimal communication strategy</span>
+                          </li>
+                          <li className="flex items-start space-x-2">
+                            <span className="text-cyan-600 mt-0.5">•</span>
+                            <span>Monitor for churn signals and deploy retention campaigns</span>
+                          </li>
+                        </>
+                      )}
+                    </ul>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="p-6 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
+              <button onClick={() => setShowSegmentModal(false)} className="px-6 py-3 border border-gray-300 dark:border-gray-600 rounded-xl font-semibold hover:bg-gray-50 dark:hover:bg-td-navy-light/40 transition-colors">
+                Close
+              </button>
+              {selectedSegment && (
+                <button
+                  onClick={() => {
+                    const segmentData = {
+                      segment: selectedSegment,
+                      exportedAt: new Date().toISOString()
+                    };
+                    const dataStr = JSON.stringify(segmentData, null, 2);
+                    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+                    const url = URL.createObjectURL(dataBlob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = `segment-${selectedSegment.name.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}.json`;
+                    link.click();
+                  }}
+                  className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all duration-300 flex items-center space-x-2"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>Export Segment Data</span>
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Forecast Trends Modal */}
+      {showForecastModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowForecastModal(false)}>
+          <div className="bg-white dark:bg-td-navy-light border border-gray-200 dark:border-td-navy-light/30 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center">
+                    <LineChart className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Forecast Trends</h2>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">AI-powered performance predictions</p>
+                  </div>
+                </div>
+                <button onClick={() => setShowForecastModal(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div className="p-6 space-y-6">
+              {/* Forecast Configuration */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Time Horizon</label>
+                  <select className="w-full px-4 py-3 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-td-navy-light text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500">
+                    <option>Next 30 Days</option>
+                    <option>Next 60 Days</option>
+                    <option>Next 90 Days</option>
+                    <option>Next Quarter</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Metric to Forecast</label>
+                  <select className="w-full px-4 py-3 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-td-navy-light text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500">
+                    <option>Revenue</option>
+                    <option>Conversions</option>
+                    <option>Campaign ROAS</option>
+                    <option>Brand Awareness</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Forecast Scenarios */}
+              <div>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Predicted Outcomes</h3>
+                <div className="space-y-3">
+                  {/* Optimistic */}
+                  <div className="p-4 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border border-green-200 dark:border-green-800 rounded-xl">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center space-x-2">
+                        <TrendingUp className="w-5 h-5 text-green-600" />
+                        <h4 className="font-semibold text-gray-900 dark:text-white">Optimistic Scenario</h4>
+                      </div>
+                      <span className="text-sm font-semibold text-green-600">+32% Growth</span>
+                    </div>
+                    <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">
+                      With current high-performing campaigns scaled and optimization applied
+                    </p>
+                    <div className="grid grid-cols-3 gap-4 text-sm">
+                      <div>
+                        <p className="text-gray-600 dark:text-gray-400">Revenue</p>
+                        <p className="text-lg font-bold text-gray-900 dark:text-white">$16.4M</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-600 dark:text-gray-400">Conversions</p>
+                        <p className="text-lg font-bold text-gray-900 dark:text-white">97.2K</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-600 dark:text-gray-400">Avg ROAS</p>
+                        <p className="text-lg font-bold text-gray-900 dark:text-white">8.4x</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Realistic */}
+                  <div className="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-800 rounded-xl">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center space-x-2">
+                        <Activity className="w-5 h-5 text-blue-600" />
+                        <h4 className="font-semibold text-gray-900 dark:text-white">Realistic Scenario</h4>
+                      </div>
+                      <span className="text-sm font-semibold text-blue-600">+18% Growth</span>
+                    </div>
+                    <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">
+                      Based on historical trends and current market conditions
+                    </p>
+                    <div className="grid grid-cols-3 gap-4 text-sm">
+                      <div>
+                        <p className="text-gray-600 dark:text-gray-400">Revenue</p>
+                        <p className="text-lg font-bold text-gray-900 dark:text-white">$14.6M</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-600 dark:text-gray-400">Conversions</p>
+                        <p className="text-lg font-bold text-gray-900 dark:text-white">87.3K</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-600 dark:text-gray-400">Avg ROAS</p>
+                        <p className="text-lg font-bold text-gray-900 dark:text-white">7.6x</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Conservative */}
+                  <div className="p-4 bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 border border-orange-200 dark:border-orange-800 rounded-xl">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center space-x-2">
+                        <TrendDown className="w-5 h-5 text-orange-600" />
+                        <h4 className="font-semibold text-gray-900 dark:text-white">Conservative Scenario</h4>
+                      </div>
+                      <span className="text-sm font-semibold text-orange-600">+8% Growth</span>
+                    </div>
+                    <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">
+                      Accounting for market saturation and increased competition
+                    </p>
+                    <div className="grid grid-cols-3 gap-4 text-sm">
+                      <div>
+                        <p className="text-gray-600 dark:text-gray-400">Revenue</p>
+                        <p className="text-lg font-bold text-gray-900 dark:text-white">$13.4M</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-600 dark:text-gray-400">Conversions</p>
+                        <p className="text-lg font-bold text-gray-900 dark:text-white">79.8K</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-600 dark:text-gray-400">Avg ROAS</p>
+                        <p className="text-lg font-bold text-gray-900 dark:text-white">6.9x</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Key Assumptions */}
+              <div className="p-4 bg-gray-50 dark:bg-td-navy-light/20 rounded-xl">
+                <h4 className="font-semibold text-gray-900 dark:text-white mb-3">Key Assumptions</h4>
+                <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
+                  <li className="flex items-start space-x-2">
+                    <span className="text-green-600 mt-0.5">✓</span>
+                    <span>Current budget allocation maintained with 15% increase to top performers</span>
+                  </li>
+                  <li className="flex items-start space-x-2">
+                    <span className="text-green-600 mt-0.5">✓</span>
+                    <span>Seasonal trends factored in based on historical Q3/Q4 performance</span>
+                  </li>
+                  <li className="flex items-start space-x-2">
+                    <span className="text-green-600 mt-0.5">✓</span>
+                    <span>Email & CRM channel maintains current 12.3x ROAS performance</span>
+                  </li>
+                  <li className="flex items-start space-x-2">
+                    <span className="text-green-600 mt-0.5">✓</span>
+                    <span>No major market disruptions or competitor launches assumed</span>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Recommended Actions */}
+              <div className="p-4 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border border-purple-200 dark:border-purple-800 rounded-xl">
+                <h4 className="font-semibold text-gray-900 dark:text-white mb-3 flex items-center space-x-2">
+                  <Target className="w-5 h-5 text-purple-600" />
+                  <span>Recommended Actions</span>
+                </h4>
+                <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
+                  <li className="flex items-start space-x-2">
+                    <span className="text-purple-600 mt-0.5">→</span>
+                    <span>Increase Email & CRM budget by 25% to capitalize on highest ROAS channel</span>
+                  </li>
+                  <li className="flex items-start space-x-2">
+                    <span className="text-purple-600 mt-0.5">→</span>
+                    <span>Scale Retail Media Networks campaigns to maintain 9.1x ROAS momentum</span>
+                  </li>
+                  <li className="flex items-start space-x-2">
+                    <span className="text-purple-600 mt-0.5">→</span>
+                    <span>Optimize or pause Programmatic Display (3.4x ROAS) pending performance review</span>
+                  </li>
+                  <li className="flex items-start space-x-2">
+                    <span className="text-purple-600 mt-0.5">→</span>
+                    <span>Deploy retention campaigns for At-Risk Switchers segment to reduce churn</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="p-6 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
+              <button onClick={() => setShowForecastModal(false)} className="px-6 py-3 border border-gray-300 dark:border-gray-600 rounded-xl font-semibold hover:bg-gray-50 dark:hover:bg-td-navy-light/40 transition-colors">
+                Close
+              </button>
+              <button
+                onClick={() => {
+                  const forecastData = {
+                    timeHorizon: '30 days',
+                    scenarios: {
+                      optimistic: { revenue: 16.4, conversions: 97200, roas: 8.4 },
+                      realistic: { revenue: 14.6, conversions: 87300, roas: 7.6 },
+                      conservative: { revenue: 13.4, conversions: 79800, roas: 6.9 }
+                    },
+                    exportedAt: new Date().toISOString()
+                  };
+                  const dataStr = JSON.stringify(forecastData, null, 2);
+                  const dataBlob = new Blob([dataStr], { type: 'application/json' });
+                  const url = URL.createObjectURL(dataBlob);
+                  const link = document.createElement('a');
+                  link.href = url;
+                  link.download = `forecast-trends-${Date.now()}.json`;
+                  link.click();
+                }}
+                className="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all duration-300 flex items-center space-x-2"
+              >
+                <Download className="w-4 h-4" />
+                <span>Export Forecast</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
