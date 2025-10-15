@@ -49,7 +49,7 @@ export default function GuidedTour({ onComplete }: GuidedTourProps) {
     },
     {
       title: 'Navigation Menu',
-      description: 'Access Campaigns, Autopilot automation, Brand Hub resources, and your interaction History from here.',
+      description: 'Access Campaigns, Auto-Execute automation, Brand Hub resources, and your interaction History from here.',
       target: 'main-navigation',
       icon: MousePointer2,
       interactionHint: 'Try clicking different navigation items',

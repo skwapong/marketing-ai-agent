@@ -13,7 +13,7 @@ export default function MainNavigation({ activeSection, onSectionChange }: MainN
     { id: 'home', label: 'Home', icon: Home },
     { id: 'insights', label: 'Insights', icon: BarChart3 },
     { id: 'campaigns', label: 'Campaigns', icon: Rocket },
-    { id: 'autopilot', label: 'Autopilot', icon: Zap },
+    { id: 'auto-execute', label: 'Auto-Execute', icon: Zap },
     { id: 'knowledge', label: 'Brand Hub', icon: BookOpen },
     { id: 'history', label: 'History', icon: History },
   ];

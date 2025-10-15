@@ -6,7 +6,7 @@ import MainNavigation from '@/components/MainNavigation';
 import HomeSection from '@/components/HomeSection';
 import InsightsSection from '@/components/InsightsSection';
 import CampaignsSection from '@/components/CampaignsSection';
-import AutopilotSection from '@/components/AutopilotSection';
+import AutoExecuteSection from '@/components/AutoExecuteSection';
 import KnowledgeBaseSection from '@/components/KnowledgeBaseSection';
 import HistorySection from '@/components/HistorySection';
 import ChatInterface from '@/components/ChatInterface';
@@ -154,8 +154,8 @@ export default function Home() {
         return <InsightsSection />;
       case 'campaigns':
         return <CampaignsSection />;
-      case 'autopilot':
-        return <AutopilotSection />;
+      case 'auto-execute':
+        return <AutoExecuteSection />;
       case 'knowledge':
         return <KnowledgeBaseSection />;
       case 'history':

@@ -21,7 +21,7 @@ export interface Persona {
   capabilities: {
     createCampaigns: boolean;
     approveBudgets: boolean;
-    manageAutopilot: boolean;
+    manageAutoExecute: boolean;
     accessBrandHub: boolean;
     uploadToBrandHub: boolean;
     exportAnalytics: boolean;
@@ -46,7 +46,7 @@ export const personas: Record<PersonaType, Persona> = {
     capabilities: {
       createCampaigns: true,
       approveBudgets: true,
-      manageAutopilot: true,
+      manageAutoExecute: true,
       accessBrandHub: true,
       uploadToBrandHub: true,
       exportAnalytics: true,
@@ -69,7 +69,7 @@ export const personas: Record<PersonaType, Persona> = {
     capabilities: {
       createCampaigns: true,
       approveBudgets: false,
-      manageAutopilot: false,
+      manageAutoExecute: false,
       accessBrandHub: true,
       uploadToBrandHub: false,
       exportAnalytics: true,
@@ -92,7 +92,7 @@ export const personas: Record<PersonaType, Persona> = {
     capabilities: {
       createCampaigns: true,
       approveBudgets: false,
-      manageAutopilot: false,
+      manageAutoExecute: false,
       accessBrandHub: true,
       uploadToBrandHub: false,
       exportAnalytics: true,
@@ -115,7 +115,7 @@ export const personas: Record<PersonaType, Persona> = {
     capabilities: {
       createCampaigns: false,
       approveBudgets: false,
-      manageAutopilot: true,
+      manageAutoExecute: true,
       accessBrandHub: true,
       uploadToBrandHub: false,
       exportAnalytics: true,
@@ -138,7 +138,7 @@ export const personas: Record<PersonaType, Persona> = {
     capabilities: {
       createCampaigns: false,
       approveBudgets: false,
-      manageAutopilot: false,
+      manageAutoExecute: false,
       accessBrandHub: true,
       uploadToBrandHub: true,
       exportAnalytics: false,
@@ -161,7 +161,7 @@ export const personas: Record<PersonaType, Persona> = {
     capabilities: {
       createCampaigns: false,
       approveBudgets: false,
-      manageAutopilot: false,
+      manageAutoExecute: false,
       accessBrandHub: true,
       uploadToBrandHub: false,
       exportAnalytics: true,
@@ -184,7 +184,7 @@ export const personas: Record<PersonaType, Persona> = {
     capabilities: {
       createCampaigns: true,
       approveBudgets: false,
-      manageAutopilot: false,
+      manageAutoExecute: false,
       accessBrandHub: true,
       uploadToBrandHub: false,
       exportAnalytics: true,
@@ -207,7 +207,7 @@ export const personas: Record<PersonaType, Persona> = {
     capabilities: {
       createCampaigns: false,
       approveBudgets: false,
-      manageAutopilot: false,
+      manageAutoExecute: false,
       accessBrandHub: true,
       uploadToBrandHub: true,
       exportAnalytics: false,
@@ -230,7 +230,7 @@ export const personas: Record<PersonaType, Persona> = {
     capabilities: {
       createCampaigns: false,
       approveBudgets: false,
-      manageAutopilot: true,
+      manageAutoExecute: true,
       accessBrandHub: true,
       uploadToBrandHub: true,
       exportAnalytics: true,
@@ -253,7 +253,7 @@ export const personas: Record<PersonaType, Persona> = {
     capabilities: {
       createCampaigns: false,
       approveBudgets: false,
-      manageAutopilot: false,
+      manageAutoExecute: false,
       accessBrandHub: true,
       uploadToBrandHub: false,
       exportAnalytics: false,

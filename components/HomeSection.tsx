@@ -64,7 +64,7 @@ export default function HomeSection({ onSelectAgent, onNavigateToSection, onSupe
     },
     {
       title: 'Budget Optimization',
-      description: 'Autopilot reallocated $5K to high-performing channels',
+      description: 'Auto-Execute reallocated $5K to high-performing channels',
       time: '1 day ago',
       type: 'success',
     },
@@ -97,7 +97,7 @@ export default function HomeSection({ onSelectAgent, onNavigateToSection, onSupe
               <ArrowRight className="w-4 h-4" />
             </button>
             <button
-              onClick={() => onNavigateToSection('autopilot')}
+              onClick={() => onNavigateToSection('auto-execute')}
               className="bg-white/20 backdrop-blur text-white border border-white/30 px-5 py-2.5 rounded-lg font-bold hover:bg-white/30 transition-all duration-300"
               style={{ letterSpacing: '0.01em' }}
             >
@@ -210,7 +210,7 @@ export default function HomeSection({ onSelectAgent, onNavigateToSection, onSupe
                 </p>
               </button>
               <button
-                onClick={() => onNavigateToSection('autopilot')}
+                onClick={() => onNavigateToSection('auto-execute')}
                 className="w-full bg-white dark:bg-td-navy-light/40 border border-gray-200 dark:border-td-navy-light/30 rounded-xl p-4 text-left hover:border-td-blue hover:shadow-lg transition-all duration-300"
               >
                 <p className="font-semibold text-gray-900 dark:text-white mb-1">

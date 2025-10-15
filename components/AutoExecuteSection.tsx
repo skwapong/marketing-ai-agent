@@ -15,7 +15,7 @@ interface AutomationRule {
   nextRun: string;
 }
 
-export default function AutopilotSection() {
+export default function AutoExecuteSection() {
   const [rules] = useState<AutomationRule[]>([
     {
       id: '1',
@@ -68,10 +68,10 @@ export default function AutopilotSection() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-            Autopilot Automation
+            Auto-Execute
           </h2>
           <p className="text-gray-600 dark:text-gray-400">
-            Set up automated workflows to streamline your marketing operations
+            Automated workflows that execute marketing actions based on triggers and conditions
           </p>
         </div>
         <button className="bg-gradient-blue text-white px-6 py-3 rounded-lg font-semibold hover:shadow-glow-lg transition-all duration-300 flex items-center space-x-2">
