@@ -3,20 +3,72 @@
 import React from 'react';
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Download, Save, Share2, Lightbulb } from 'lucide-react';
+import CreativePreview, { CreativeContent } from './CreativePreview';
 
 interface VisualizationPanelProps {
-  visualizationType?: 'bar' | 'line' | 'pie' | 'table';
+  visualizationType?: 'bar' | 'line' | 'pie' | 'table' | 'creative';
   data?: any[];
   recommendations?: string[];
+  creativeContent?: CreativeContent;
   onExport?: () => void;
+  onRefineCreative?: (variant: any, feedback: string) => void;
 }
 
 export default function VisualizationPanel({
   visualizationType,
   data,
   recommendations,
-  onExport
+  creativeContent,
+  onExport,
+  onRefineCreative
 }: VisualizationPanelProps) {
+  // Show creative preview if creative content is available
+  if (visualizationType === 'creative' && creativeContent) {
+    return (
+      <div className="h-full flex flex-col bg-gray-50 dark:bg-gradient-dark">
+        {/* Action Bar */}
+        <div className="border-b border-gray-200 dark:border-td-navy-light/20 px-8 py-5 flex items-center justify-between">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">Creative Concepts</h2>
+          <div className="flex items-center space-x-3">
+            <button
+              onClick={onExport}
+              className="px-4 py-2.5 text-sm bg-white dark:bg-td-navy-light/40 border border-gray-300 dark:border-td-navy-light/30 rounded-lg text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-td-navy-light/60 hover:border-td-blue transition-all flex items-center space-x-2"
+            >
+              <Download className="w-4 h-4" />
+              <span>Export All</span>
+            </button>
+            <button className="px-4 py-2.5 text-sm bg-white dark:bg-td-navy-light/40 border border-gray-300 dark:border-td-navy-light/30 rounded-lg text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-td-navy-light/60 hover:border-td-blue transition-all flex items-center space-x-2">
+              <Save className="w-4 h-4" />
+              <span>Save</span>
+            </button>
+            <button className="px-4 py-2.5 text-sm bg-gradient-blue rounded-lg text-white hover:shadow-glow transition-all flex items-center space-x-2 font-semibold">
+              <Share2 className="w-4 h-4" />
+              <span>Share</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Creative Preview Content */}
+        <div className="flex-1 p-8 overflow-y-auto">
+          <CreativePreview
+            content={creativeContent}
+            onRefine={onRefineCreative}
+            onDownload={(variant) => {
+              // Handle individual variant download
+              const dataStr = JSON.stringify(variant, null, 2);
+              const dataBlob = new Blob([dataStr], { type: 'application/json' });
+              const url = URL.createObjectURL(dataBlob);
+              const link = document.createElement('a');
+              link.href = url;
+              link.download = `creative-${variant.title.toLowerCase().replace(/\s+/g, '-')}.json`;
+              link.click();
+            }}
+          />
+        </div>
+      </div>
+    );
+  }
+
   if (!data || data.length === 0) {
     return (
       <div className="h-full flex items-center justify-center bg-gray-50 dark:bg-gradient-dark">

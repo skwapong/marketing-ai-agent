@@ -71,8 +71,8 @@ export default function Home() {
       };
       setMessages(prev => [...prev, assistantMessage]);
 
-      // Update visualization if data is available
-      if (response.data) {
+      // Update visualization if data or creative content is available
+      if (response.data || response.creativeContent) {
         setCurrentVisualization(response);
       }
     } catch (error) {
@@ -82,6 +82,31 @@ export default function Home() {
         content: 'I apologize, but I encountered an error processing your request. Please try again.'
       };
       setMessages(prev => [...prev, errorMessage]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleRefineCreative = async (variant: any, feedback: string) => {
+    // Add user refinement request
+    const refinementMessage: Message = {
+      role: 'user',
+      content: `Refine this creative concept:\n"${variant.title}"\n\nChanges requested: ${feedback}`
+    };
+    setMessages(prev => [...prev, refinementMessage]);
+    setIsLoading(true);
+
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1500));
+
+      // Generate refined version
+      const refinedResponse: Message = {
+        role: 'assistant',
+        content: `I've refined the "${variant.title}" concept based on your feedback. Here's the updated version:\n\n${variant.content}\n\nUpdates applied:\n• ${feedback}\n• Enhanced clarity and impact\n• Maintained brand voice consistency`
+      };
+      setMessages(prev => [...prev, refinedResponse]);
+    } catch (error) {
+      console.error('Error refining creative:', error);
     } finally {
       setIsLoading(false);
     }
@@ -154,7 +179,9 @@ export default function Home() {
                 visualizationType={currentVisualization?.visualizationType}
                 data={currentVisualization?.data}
                 recommendations={currentVisualization?.recommendations}
+                creativeContent={currentVisualization?.creativeContent}
                 onExport={handleExport}
+                onRefineCreative={handleRefineCreative}
               />
             </div>
           </div>
