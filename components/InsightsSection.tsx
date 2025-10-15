@@ -83,6 +83,9 @@ export default function InsightsSection() {
   const [showSegmentModal, setShowSegmentModal] = useState(false);
   const [showForecastModal, setShowForecastModal] = useState(false);
   const [selectedSegment, setSelectedSegment] = useState<AudienceSegment | null>(null);
+  const [selectedReportFormat, setSelectedReportFormat] = useState<'PDF' | 'Excel' | 'CSV' | 'JSON'>('JSON');
+  const [selectedSegmentFormat, setSelectedSegmentFormat] = useState<'CSV' | 'JSON'>('JSON');
+  const [selectedForecastFormat, setSelectedForecastFormat] = useState<'CSV' | 'JSON'>('JSON');
 
   // Base data that changes with time range
   const getMetricsForTimeRange = (range: '7d' | '30d' | '90d'): MetricCard[] => {
@@ -257,6 +260,270 @@ export default function InsightsSection() {
       const link = document.createElement('a');
       link.href = url;
       link.download = `marketing-insights-${timeRange}-${Date.now()}.csv`;
+      link.click();
+    }
+  };
+
+  const exportReportData = (format: 'PDF' | 'Excel' | 'CSV' | 'JSON') => {
+    const data = {
+      timeRange,
+      metrics,
+      channelPerformance,
+      topCampaigns,
+      audienceSegments,
+      exportedAt: new Date().toISOString()
+    };
+
+    if (format === 'JSON') {
+      const dataStr = JSON.stringify(data, null, 2);
+      const dataBlob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(dataBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `marketing-report-${timeRange}-${Date.now()}.json`;
+      link.click();
+    } else if (format === 'CSV') {
+      let csv = 'Marketing Insights Report\n';
+      csv += `Generated: ${new Date().toLocaleString()}\n`;
+      csv += `Time Range: ${timeRange === '7d' ? 'Last 7 Days' : timeRange === '30d' ? 'Last 30 Days' : 'Last 90 Days'}\n\n`;
+
+      csv += 'KEY METRICS\n';
+      csv += 'Metric,Value,Change,Trend\n';
+      metrics.forEach(m => {
+        csv += `"${m.title}","${m.value}","${m.change}%","${m.trend}"\n`;
+      });
+
+      csv += '\nCHANNEL PERFORMANCE\n';
+      csv += 'Channel,Impressions,Clicks,Conversions,Spend,ROAS,CTR,CPC\n';
+      channelPerformance.forEach(ch => {
+        csv += `"${ch.channel}",${ch.impressions},${ch.clicks},${ch.conversions},${ch.spend},${ch.roas},${ch.ctr?.toFixed(2)}%,$${ch.cpc?.toFixed(2)}\n`;
+      });
+
+      csv += '\nTOP CAMPAIGNS\n';
+      csv += 'Campaign,Brand,Conversions,Spend,ROAS,Status\n';
+      topCampaigns.forEach(c => {
+        csv += `"${c.name}","${c.brand}",${c.conversions},$${c.spend},${c.roas},${c.status}\n`;
+      });
+
+      csv += '\nAUDIENCE SEGMENTS\n';
+      csv += 'Segment,Size,Engagement,Revenue,Avg Order Value,Churn Risk\n';
+      audienceSegments.forEach(s => {
+        csv += `"${s.name}",${s.size},${s.engagement}%,$${s.revenue},$${s.avgOrderValue},${s.churnRisk}\n`;
+      });
+
+      const csvBlob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(csvBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `marketing-report-${timeRange}-${Date.now()}.csv`;
+      link.click();
+    } else if (format === 'Excel') {
+      // Excel format as CSV (can be opened in Excel)
+      let csv = 'Marketing Insights Report\n';
+      csv += `Generated: ${new Date().toLocaleString()}\n`;
+      csv += `Time Range: ${timeRange === '7d' ? 'Last 7 Days' : timeRange === '30d' ? 'Last 30 Days' : 'Last 90 Days'}\n\n`;
+
+      csv += 'KEY METRICS\n';
+      csv += 'Metric\tValue\tChange\tTrend\n';
+      metrics.forEach(m => {
+        csv += `${m.title}\t${m.value}\t${m.change}%\t${m.trend}\n`;
+      });
+
+      csv += '\nCHANNEL PERFORMANCE\n';
+      csv += 'Channel\tImpressions\tClicks\tConversions\tSpend\tROAS\tCTR\tCPC\n';
+      channelPerformance.forEach(ch => {
+        csv += `${ch.channel}\t${ch.impressions}\t${ch.clicks}\t${ch.conversions}\t$${ch.spend}\t${ch.roas}x\t${ch.ctr?.toFixed(2)}%\t$${ch.cpc?.toFixed(2)}\n`;
+      });
+
+      csv += '\nTOP CAMPAIGNS\n';
+      csv += 'Campaign\tBrand\tConversions\tSpend\tROAS\tStatus\n';
+      topCampaigns.forEach(c => {
+        csv += `${c.name}\t${c.brand}\t${c.conversions}\t$${c.spend}\t${c.roas}x\t${c.status}\n`;
+      });
+
+      csv += '\nAUDIENCE SEGMENTS\n';
+      csv += 'Segment\tSize\tEngagement\tRevenue\tAvg Order Value\tChurn Risk\n';
+      audienceSegments.forEach(s => {
+        csv += `${s.name}\t${s.size}\t${s.engagement}%\t$${s.revenue}\t$${s.avgOrderValue}\t${s.churnRisk}\n`;
+      });
+
+      const csvBlob = new Blob([csv], { type: 'text/tab-separated-values' });
+      const url = URL.createObjectURL(csvBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `marketing-report-${timeRange}-${Date.now()}.xls`;
+      link.click();
+    } else if (format === 'PDF') {
+      // PDF as formatted text (can be converted to PDF)
+      let content = '═══════════════════════════════════════════════════════════\n';
+      content += '                  MARKETING INSIGHTS REPORT\n';
+      content += '═══════════════════════════════════════════════════════════\n\n';
+      content += `Generated: ${new Date().toLocaleString()}\n`;
+      content += `Time Range: ${timeRange === '7d' ? 'Last 7 Days' : timeRange === '30d' ? 'Last 30 Days' : 'Last 90 Days'}\n\n`;
+
+      content += '───────────────────────────────────────────────────────────\n';
+      content += 'KEY METRICS\n';
+      content += '───────────────────────────────────────────────────────────\n\n';
+      metrics.forEach(m => {
+        content += `${m.title}: ${m.value} (${m.trend === 'up' ? '↑' : '↓'} ${m.change}%)\n`;
+      });
+
+      content += '\n───────────────────────────────────────────────────────────\n';
+      content += 'CHANNEL PERFORMANCE\n';
+      content += '───────────────────────────────────────────────────────────\n\n';
+      channelPerformance.forEach(ch => {
+        content += `${ch.channel}\n`;
+        content += `  Impressions: ${formatNumber(ch.impressions)} | Clicks: ${formatNumber(ch.clicks)}\n`;
+        content += `  Conversions: ${formatNumber(ch.conversions)} | Spend: $${formatNumber(ch.spend)}\n`;
+        content += `  ROAS: ${ch.roas}x | CTR: ${ch.ctr?.toFixed(2)}% | CPC: $${ch.cpc?.toFixed(2)}\n\n`;
+      });
+
+      content += '───────────────────────────────────────────────────────────\n';
+      content += 'TOP PERFORMING CAMPAIGNS\n';
+      content += '───────────────────────────────────────────────────────────\n\n';
+      topCampaigns.forEach((c, idx) => {
+        content += `${idx + 1}. ${c.name} (${c.brand})\n`;
+        content += `   Conversions: ${c.conversions.toLocaleString()} | Spend: $${formatNumber(c.spend)}\n`;
+        content += `   ROAS: ${c.roas}x | Status: ${c.status}\n\n`;
+      });
+
+      content += '───────────────────────────────────────────────────────────\n';
+      content += 'AUDIENCE SEGMENTS\n';
+      content += '───────────────────────────────────────────────────────────\n\n';
+      audienceSegments.forEach(s => {
+        content += `${s.name} (${s.churnRisk?.toUpperCase()} RISK)\n`;
+        content += `  Size: ${formatNumber(s.size)} users | Engagement: ${s.engagement}%\n`;
+        content += `  Revenue: $${formatNumber(s.revenue)} | AOV: $${s.avgOrderValue}\n\n`;
+      });
+
+      content += '═══════════════════════════════════════════════════════════\n';
+      content += '                    END OF REPORT\n';
+      content += '═══════════════════════════════════════════════════════════\n';
+
+      const textBlob = new Blob([content], { type: 'text/plain' });
+      const url = URL.createObjectURL(textBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `marketing-report-${timeRange}-${Date.now()}.txt`;
+      link.click();
+    }
+  };
+
+  const exportSegmentData = (segment: AudienceSegment, format: 'CSV' | 'JSON') => {
+    if (format === 'JSON') {
+      const segmentData = {
+        segment,
+        exportedAt: new Date().toISOString()
+      };
+      const dataStr = JSON.stringify(segmentData, null, 2);
+      const dataBlob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(dataBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `segment-${segment.name.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}.json`;
+      link.click();
+    } else if (format === 'CSV') {
+      let csv = 'Segment Analysis Report\n';
+      csv += `Generated: ${new Date().toLocaleString()}\n\n`;
+
+      csv += 'SEGMENT OVERVIEW\n';
+      csv += `Name,${segment.name}\n`;
+      csv += `Size,${segment.size} users\n`;
+      csv += `Engagement,${segment.engagement}%\n`;
+      csv += `Revenue,$${segment.revenue}\n`;
+      csv += `Avg Order Value,$${segment.avgOrderValue}\n`;
+      csv += `Revenue per User,$${(segment.revenue / segment.size).toFixed(2)}\n`;
+      csv += `Churn Risk,${segment.churnRisk?.toUpperCase()}\n\n`;
+
+      csv += 'KEY METRICS\n';
+      csv += 'Metric,Value\n';
+      csv += `Total Users,${segment.size}\n`;
+      csv += `Engagement Rate,${segment.engagement}%\n`;
+      csv += `Total Revenue,$${segment.revenue}\n`;
+      csv += `Average Order Value,$${segment.avgOrderValue}\n`;
+      csv += `Revenue per User,$${(segment.revenue / segment.size).toFixed(2)}\n`;
+
+      const csvBlob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(csvBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `segment-${segment.name.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}.csv`;
+      link.click();
+    }
+  };
+
+  const exportForecastData = (format: 'CSV' | 'JSON') => {
+    const forecastData = {
+      timeHorizon: '30 days',
+      generatedAt: new Date().toISOString(),
+      scenarios: {
+        optimistic: {
+          growth: '+32%',
+          revenue: 16.4,
+          conversions: 97200,
+          roas: 8.4
+        },
+        realistic: {
+          growth: '+18%',
+          revenue: 14.6,
+          conversions: 87300,
+          roas: 7.6
+        },
+        conservative: {
+          growth: '+8%',
+          revenue: 13.4,
+          conversions: 79800,
+          roas: 6.9
+        }
+      },
+      assumptions: [
+        'Current budget allocation maintained with 15% increase to top performers',
+        'Seasonal trends factored in based on historical Q3/Q4 performance',
+        'Email & CRM channel maintains current 12.3x ROAS performance',
+        'No major market disruptions or competitor launches assumed'
+      ],
+      recommendations: [
+        'Increase Email & CRM budget by 25% to capitalize on highest ROAS channel',
+        'Scale Retail Media Networks campaigns to maintain 9.1x ROAS momentum',
+        'Optimize or pause Programmatic Display (3.4x ROAS) pending performance review',
+        'Deploy retention campaigns for At-Risk Switchers segment to reduce churn'
+      ]
+    };
+
+    if (format === 'JSON') {
+      const dataStr = JSON.stringify(forecastData, null, 2);
+      const dataBlob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(dataBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `forecast-trends-${Date.now()}.json`;
+      link.click();
+    } else if (format === 'CSV') {
+      let csv = 'Forecast Trends Report\n';
+      csv += `Generated: ${new Date().toLocaleString()}\n`;
+      csv += `Time Horizon: 30 days\n\n`;
+
+      csv += 'PREDICTED SCENARIOS\n';
+      csv += 'Scenario,Growth,Revenue (M),Conversions (K),Avg ROAS\n';
+      csv += `Optimistic,+32%,$16.4M,97.2K,8.4x\n`;
+      csv += `Realistic,+18%,$14.6M,87.3K,7.6x\n`;
+      csv += `Conservative,+8%,$13.4M,79.8K,6.9x\n\n`;
+
+      csv += 'KEY ASSUMPTIONS\n';
+      forecastData.assumptions.forEach((assumption, idx) => {
+        csv += `${idx + 1},"${assumption}"\n`;
+      });
+
+      csv += '\nRECOMMENDED ACTIONS\n';
+      forecastData.recommendations.forEach((rec, idx) => {
+        csv += `${idx + 1},"${rec}"\n`;
+      });
+
+      const csvBlob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(csvBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `forecast-trends-${Date.now()}.csv`;
       link.click();
     }
   };
@@ -699,10 +966,18 @@ export default function InsightsSection() {
               <div>
                 <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Report Type</label>
                 <div className="grid grid-cols-2 gap-3">
-                  {['PDF', 'Excel', 'CSV', 'JSON'].map((type) => (
-                    <button key={type} className="p-4 border-2 border-gray-200 dark:border-gray-700 rounded-xl hover:border-td-blue hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-300 text-left">
+                  {(['PDF', 'Excel', 'CSV', 'JSON'] as const).map((type) => (
+                    <button
+                      key={type}
+                      onClick={() => setSelectedReportFormat(type)}
+                      className={`p-4 border-2 rounded-xl transition-all duration-300 text-left ${
+                        selectedReportFormat === type
+                          ? 'border-td-blue bg-blue-50 dark:bg-blue-900/20'
+                          : 'border-gray-200 dark:border-gray-700 hover:border-td-blue hover:bg-blue-50 dark:hover:bg-blue-900/20'
+                      }`}
+                    >
                       <div className="flex items-center space-x-2">
-                        <Download className="w-5 h-5 text-td-blue" />
+                        <Download className={`w-5 h-5 ${selectedReportFormat === type ? 'text-td-blue' : 'text-gray-400'}`} />
                         <span className="font-semibold text-gray-900 dark:text-white">{type}</span>
                       </div>
                       <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Export as {type}</p>
@@ -756,12 +1031,13 @@ export default function InsightsSection() {
               </button>
               <button
                 onClick={() => {
-                  handleExport('json');
+                  exportReportData(selectedReportFormat);
                   setShowReportModal(false);
                 }}
-                className="px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all duration-300"
+                className="px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all duration-300 flex items-center space-x-2"
               >
-                Generate Report
+                <Download className="w-4 h-4" />
+                <span>Export as {selectedReportFormat}</span>
               </button>
             </div>
           </div>
@@ -922,31 +1198,44 @@ export default function InsightsSection() {
               )}
             </div>
 
-            <div className="p-6 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
-              <button onClick={() => setShowSegmentModal(false)} className="px-6 py-3 border border-gray-300 dark:border-gray-600 rounded-xl font-semibold hover:bg-gray-50 dark:hover:bg-td-navy-light/40 transition-colors">
-                Close
-              </button>
+            <div className="p-6 border-t border-gray-200 dark:border-gray-700">
               {selectedSegment && (
-                <button
-                  onClick={() => {
-                    const segmentData = {
-                      segment: selectedSegment,
-                      exportedAt: new Date().toISOString()
-                    };
-                    const dataStr = JSON.stringify(segmentData, null, 2);
-                    const dataBlob = new Blob([dataStr], { type: 'application/json' });
-                    const url = URL.createObjectURL(dataBlob);
-                    const link = document.createElement('a');
-                    link.href = url;
-                    link.download = `segment-${selectedSegment.name.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}.json`;
-                    link.click();
-                  }}
-                  className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all duration-300 flex items-center space-x-2"
-                >
-                  <Download className="w-4 h-4" />
-                  <span>Export Segment Data</span>
-                </button>
+                <div className="mb-4">
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Export Format</label>
+                  <div className="flex space-x-3">
+                    {(['JSON', 'CSV'] as const).map((format) => (
+                      <button
+                        key={format}
+                        onClick={() => setSelectedSegmentFormat(format)}
+                        className={`flex-1 px-4 py-2 border-2 rounded-lg transition-all duration-300 ${
+                          selectedSegmentFormat === format
+                            ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300'
+                            : 'border-gray-200 dark:border-gray-700 hover:border-purple-300'
+                        }`}
+                      >
+                        <span className="font-semibold text-sm">{format}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
               )}
+              <div className="flex items-center justify-between">
+                <button onClick={() => setShowSegmentModal(false)} className="px-6 py-3 border border-gray-300 dark:border-gray-600 rounded-xl font-semibold hover:bg-gray-50 dark:hover:bg-td-navy-light/40 transition-colors">
+                  Close
+                </button>
+                {selectedSegment && (
+                  <button
+                    onClick={() => {
+                      exportSegmentData(selectedSegment, selectedSegmentFormat);
+                      setShowSegmentModal(false);
+                    }}
+                    className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all duration-300 flex items-center space-x-2"
+                  >
+                    <Download className="w-4 h-4" />
+                    <span>Export as {selectedSegmentFormat}</span>
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -1139,34 +1428,40 @@ export default function InsightsSection() {
               </div>
             </div>
 
-            <div className="p-6 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
-              <button onClick={() => setShowForecastModal(false)} className="px-6 py-3 border border-gray-300 dark:border-gray-600 rounded-xl font-semibold hover:bg-gray-50 dark:hover:bg-td-navy-light/40 transition-colors">
-                Close
-              </button>
-              <button
-                onClick={() => {
-                  const forecastData = {
-                    timeHorizon: '30 days',
-                    scenarios: {
-                      optimistic: { revenue: 16.4, conversions: 97200, roas: 8.4 },
-                      realistic: { revenue: 14.6, conversions: 87300, roas: 7.6 },
-                      conservative: { revenue: 13.4, conversions: 79800, roas: 6.9 }
-                    },
-                    exportedAt: new Date().toISOString()
-                  };
-                  const dataStr = JSON.stringify(forecastData, null, 2);
-                  const dataBlob = new Blob([dataStr], { type: 'application/json' });
-                  const url = URL.createObjectURL(dataBlob);
-                  const link = document.createElement('a');
-                  link.href = url;
-                  link.download = `forecast-trends-${Date.now()}.json`;
-                  link.click();
-                }}
-                className="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all duration-300 flex items-center space-x-2"
-              >
-                <Download className="w-4 h-4" />
-                <span>Export Forecast</span>
-              </button>
+            <div className="p-6 border-t border-gray-200 dark:border-gray-700">
+              <div className="mb-4">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Export Format</label>
+                <div className="flex space-x-3">
+                  {(['JSON', 'CSV'] as const).map((format) => (
+                    <button
+                      key={format}
+                      onClick={() => setSelectedForecastFormat(format)}
+                      className={`flex-1 px-4 py-2 border-2 rounded-lg transition-all duration-300 ${
+                        selectedForecastFormat === format
+                          ? 'border-green-500 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300'
+                          : 'border-gray-200 dark:border-gray-700 hover:border-green-300'
+                      }`}
+                    >
+                      <span className="font-semibold text-sm">{format}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <button onClick={() => setShowForecastModal(false)} className="px-6 py-3 border border-gray-300 dark:border-gray-600 rounded-xl font-semibold hover:bg-gray-50 dark:hover:bg-td-navy-light/40 transition-colors">
+                  Close
+                </button>
+                <button
+                  onClick={() => {
+                    exportForecastData(selectedForecastFormat);
+                    setShowForecastModal(false);
+                  }}
+                  className="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all duration-300 flex items-center space-x-2"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>Export as {selectedForecastFormat}</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
