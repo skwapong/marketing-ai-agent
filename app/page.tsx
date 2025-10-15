@@ -8,6 +8,7 @@ import InsightsSection from '@/components/InsightsSection';
 import CampaignsSection from '@/components/CampaignsSection';
 import AutopilotSection from '@/components/AutopilotSection';
 import KnowledgeBaseSection from '@/components/KnowledgeBaseSection';
+import HistorySection from '@/components/HistorySection';
 import ChatInterface from '@/components/ChatInterface';
 import VisualizationPanel from '@/components/VisualizationPanel';
 import PersonaSelector from '@/components/PersonaSelector';
@@ -133,12 +134,7 @@ export default function Home() {
       case 'knowledge':
         return <KnowledgeBaseSection />;
       case 'history':
-        return (
-          <div className="p-8">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">History</h2>
-            <p className="text-gray-600 dark:text-gray-400">View your past campaigns and interactions</p>
-          </div>
-        );
+        return <HistorySection />;
       case 'chat':
         return (
           <div className="flex h-full overflow-hidden">
