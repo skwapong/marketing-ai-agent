@@ -196,7 +196,7 @@ Built as a prototype for CDP marketing intelligence applications.
 
 ## 🔧 Future Enhancements (Optional)
 
-- [ ] Real CDP API integration (Treasure Data, Segment)
+- [ ] Real CDP API integration (TD, Segment)
 - [ ] User authentication
 - [ ] Database for storing insights
 - [ ] Advanced ML models for predictions

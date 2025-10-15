@@ -122,9 +122,9 @@ export const processQuery = async (query: string): Promise<AgentResponse> => {
 
   // Default response
   return {
-    text: `I'm your Marketing Intelligence AI Agent, powered by Treasure Data CDP. I can help you with:\n\n• **Audience Insights**: Analyze customer segments, LTV, engagement, and churn risk\n• **Campaign Performance**: Review ROI, conversions, and channel effectiveness\n• **Predictive Analytics**: Forecast outcomes and run scenario simulations\n• **Content Generation**: Create personalized email copy and campaign messaging\n\nTry asking:\n• "Show me top customer segments by lifetime value"\n• "Analyze campaign performance across channels"\n• "Predict ROI if we increase budget by 20%"\n• "Generate email copy for Tech Enthusiasts"`,
+    text: `I'm your Marketing Intelligence AI Agent, powered by TD CDP. I can help you with:\n\n• **Audience Insights**: Analyze customer segments, LTV, engagement, and churn risk\n• **Campaign Performance**: Review ROI, conversions, and channel effectiveness\n• **Predictive Analytics**: Forecast outcomes and run scenario simulations\n• **Content Generation**: Create personalized email copy and campaign messaging\n\nTry asking:\n• "Show me top customer segments by lifetime value"\n• "Analyze campaign performance across channels"\n• "Predict ROI if we increase budget by 20%"\n• "Generate email copy for Tech Enthusiasts"`,
     recommendations: [
-      'Connect your Treasure Data CDP account for real-time insights',
+      'Connect your TD CDP account for real-time insights',
       'Explore quick prompts in the sidebar',
       'Set up automated alerts for churn risk'
     ]

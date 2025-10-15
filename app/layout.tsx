@@ -11,7 +11,7 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: 'Marketing Super Agent - Treasure Data',
+  title: 'Marketing Super Agent - TD',
   description: 'AI-powered marketing intelligence platform for CDP data analysis',
 }
 

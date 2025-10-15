@@ -1,6 +1,6 @@
 # Marketing Intelligence AI Agent
 
-An AI-powered web application designed for Customer Data Platform (CDP) companies like Treasure Data. This prototype demonstrates how AI agents can transform customer data into actionable marketing insights.
+An AI-powered web application designed for Customer Data Platform (CDP) companies like TD. This prototype demonstrates how AI agents can transform customer data into actionable marketing insights.
 
 ## 🎯 Overview
 
@@ -120,7 +120,7 @@ The prototype includes realistic mock data representing:
 ## 🎨 UI/UX Design
 
 ### Layout
-- **Top Navigation**: Treasure Data branding and main menu
+- **Top Navigation**: TD branding and main menu
 - **Left Sidebar**: Quick prompts and segment filters
 - **Split Main Panel**:
   - Left: Chat interface for AI conversations
@@ -134,7 +134,7 @@ The prototype includes realistic mock data representing:
 ## 🔮 Future Enhancements
 
 ### Planned Features
-- [ ] Real CDP API integration (Treasure Data, Segment, mParticle)
+- [ ] Real CDP API integration (TD, Segment, mParticle)
 - [ ] Voice-enabled insights ("Ask Treasure")
 - [ ] Multi-agent collaboration (Data Analyst + Campaign Planner)
 - [ ] Auto-execution of marketing actions in connected platforms
@@ -179,7 +179,7 @@ This is a prototype demonstration project.
 
 ## 🙏 Acknowledgments
 
-Built as a concept prototype for Customer Data Platform (CDP) marketing intelligence applications, inspired by platforms like Treasure Data, Segment, and mParticle.
+Built as a concept prototype for Customer Data Platform (CDP) marketing intelligence applications, inspired by platforms like TD, Segment, and mParticle.
 
 ---
 

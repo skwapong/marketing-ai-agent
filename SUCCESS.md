@@ -18,7 +18,7 @@ A fully functional Marketing Intelligence AI Agent prototype with:
 - ✅ AI-powered query processing
 - ✅ Quick prompt shortcuts
 - ✅ Export functionality
-- ✅ Professional Treasure Data branding
+- ✅ Professional TD branding
 
 ### Technical Stack
 - Next.js 14 + React 18
@@ -139,7 +139,7 @@ npm run dev -- -p 3002
 2. **Try Custom Queries**: Test the AI agent with your own questions
 3. **Review the Code**: Check out the implementation in `lib/aiAgent.ts`
 4. **Customize**: Modify colors, add segments, or extend query types
-5. **Integrate**: Connect to real CDP APIs (Treasure Data, Segment, etc.)
+5. **Integrate**: Connect to real CDP APIs (TD, Segment, etc.)
 
 ## 📝 Implementation Notes
 

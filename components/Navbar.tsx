@@ -23,15 +23,11 @@ export default function Navbar({ onStartTour, onNavigate }: NavbarProps) {
   return (
     <nav className="bg-white dark:bg-gradient-navy text-gray-900 dark:text-white px-8 py-4 flex items-center justify-between shadow-sm dark:shadow-glow border-b border-gray-200 dark:border-td-navy-light/20">
       <div className="flex items-center space-x-4">
-        <div className="relative w-14 h-14 flex items-center justify-center">
-          <img
-            src="https://www.treasuredata.com/wp-content/themes/td2024/assets/logos/diamond-logo.svg"
-            alt="Treasure Data"
-            className="h-14 w-14"
-          />
+        <div className="relative w-14 h-14 flex items-center justify-center bg-gradient-to-br from-td-blue to-purple-600 rounded-xl shadow-lg">
+          <Sparkles className="w-8 h-8 text-white" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight" style={{ letterSpacing: '-0.02em' }}>Treasure Data</h1>
+          <h1 className="text-2xl font-bold tracking-tight" style={{ letterSpacing: '-0.02em' }}>TD</h1>
           <p className="text-xs text-gray-600 dark:text-gray-300 font-medium" style={{ letterSpacing: '0.01em' }}>Marketing Super Agent</p>
         </div>
       </div>

@@ -141,7 +141,7 @@ export default function SuperEntry({ onSubmit, placeholder = 'What would you lik
       {/* Helper Text */}
       <div className="mt-6 text-center">
         <p className="text-sm font-medium text-white/90 dark:text-white/80" style={{ lineHeight: '1.6', letterSpacing: '0.01em' }}>
-          Powered by Treasure Data CDP • AI-driven insights for smarter marketing decisions
+          Powered by TD CDP • AI-driven insights for smarter marketing decisions
         </p>
       </div>
     </div>
